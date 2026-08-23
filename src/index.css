@@ -1,0 +1,150 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 20% 4%;
+    --foreground: 210 40% 95%;
+    --card: 220 20% 7%;
+    --muted: 220 15% 12%;
+    --muted-foreground: 215 15% 55%;
+    --accent: 186 72% 42%;
+    --accent-foreground: 0 0% 100%;
+    --border: 220 15% 14%;
+    --surface-subtle: 220 20% 6%;
+    --surface-elevated: 220 20% 9%;
+    --warn: 38 92% 55%;
+    --ok: 152 60% 45%;
+    --radius: 0.5rem;
+  }
+
+  html { color-scheme: dark; }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer components {
+  /* The brand kit is delivered as CSS variables so a kit swap restyles every
+     asset without touching a single layout rule. */
+  .brand-scope {
+    transition: background-color 450ms ease, color 450ms ease, border-color 450ms ease;
+  }
+
+  .brand-scope svg text,
+  .brand-scope svg rect,
+  .brand-scope svg circle,
+  .brand-scope svg path,
+  .brand-scope svg line {
+    transition: fill 450ms ease, stroke 450ms ease;
+  }
+
+  .thin-scroll::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .thin-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .thin-scroll::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted));
+    border-radius: 999px;
+  }
+  .thin-scroll::-webkit-scrollbar-thumb:hover {
+    background: hsl(220 15% 20%);
+  }
+}
+
+.pulse-dot {
+  animation: aePulse 1.1s ease-in-out infinite;
+}
+
+@keyframes aePulse {
+  0%, 100% { opacity: 0.25; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+/* Entrance animations.
+   These are CSS keyframes rather than JavaScript driven animations on purpose.
+   A JavaScript animation loop is paused while the window is hidden or
+   unfocused, which can leave an element stranded at its initial opacity of
+   zero, or leave a dismissed overlay behind as an invisible click blocker.
+   Because these declare "both" as the fill mode, the element always ends at
+   the final frame even if the animation never gets a chance to run. That
+   matters here: this prototype is recorded on screen, and a panel that stays
+   invisible would ruin the take.
+
+   For the same reason ae-rise and ae-slide move the element without touching
+   opacity. A frozen animation then leaves the element fully visible and merely
+   a few pixels out of place, which nobody notices, instead of leaving it
+   invisible. Opacity is only animated on the backdrop and on the soft fade,
+   where the worst case is an undimmed background. */
+@layer utilities {
+  @keyframes ae-rise {
+    from {
+      transform: translateY(8px);
+    }
+    to {
+      transform: none;
+    }
+  }
+
+  @keyframes ae-fade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes ae-fade-soft {
+    from {
+      opacity: 0.35;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes ae-slide {
+    from {
+      transform: translateX(40px);
+    }
+    to {
+      transform: none;
+    }
+  }
+
+  .ae-rise,
+  [data-ae="rise"] {
+    animation: ae-rise 380ms ease-out both;
+  }
+
+  .ae-fade,
+  [data-ae="fade"] {
+    animation: ae-fade 250ms ease-out both;
+  }
+
+  .ae-fade-soft {
+    animation: ae-fade-soft 350ms ease-out both;
+  }
+
+  .ae-slide-in,
+  [data-ae="slide"] {
+    animation: ae-slide 300ms ease-out both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ae-rise,
+    .ae-fade,
+    .ae-fade-soft,
+    .ae-slide-in,
+    [data-ae] {
+      animation-duration: 1ms;
+    }
+  }
+}
